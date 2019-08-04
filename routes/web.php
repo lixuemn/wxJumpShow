@@ -10,15 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/report', function () {
-    return view('report');
-});
-Route::get('/report2', function () {
-    return view('report2');
-});
-Route::get('/report3', function () {
-    return view('report3');
-});
+
 Route::post('/ajax/{id}', function ($id) {
     $article = \Illuminate\Support\Facades\DB::connection('mysql')
         ->table('articles')
@@ -31,7 +23,6 @@ Route::get('A-url/{id}', 'AurlController@index');
 //Route::get('show/{id}','ShowController@index');
 //Route::get('frame/{id}','IframeController@index');
 Route::post('getArticle/{id}', 'ShowController@getArticle');
-Route::post('updateEvent/{id}', 'ShowController@updateEvent');
 
 Route::get('/update/article/{id}', 'CacheFile\CacheFileController@index');
 
@@ -44,3 +35,10 @@ Route::any('form/{id}', function ($id) {
     $obj = new  \App\Http\Controllers\Article\Template\Tempalte2($article);
     return $obj->getContent();
 });
+
+Route::get('ttt', function() {
+    return view('tt');
+});
+
+Route::get('show/{id}', 'ArticleController@show');
+Route::get('iframe/{id}', 'ArticleController@show');

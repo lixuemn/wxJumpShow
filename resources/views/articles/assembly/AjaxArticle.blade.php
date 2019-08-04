@@ -1,11 +1,11 @@
 <script>
     var ajax = new XMLHttpRequest();
-    ajax.open('post', '{{$url}}');
+    ajax.open('post', '/ajax/{{$id}}');
     ajax.send();
     ajax.onreadystatechange = function () {
         if (ajax.readyState == 4 && ajax.status == 200) {
             let obj = JSON.parse(ajax.responseText);
-            document.getElementById('ajax').innerHTML = obj.content
+            document.getElementById('container').innerHTML = obj.content
         }
     }
 </script>

@@ -11,6 +11,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * 远程文章数据操作模型
+ *
+ * Class LongRangeArticle
+ * @package App\Models
+ */
 class LongRangeArticle extends Model
 {
     /*

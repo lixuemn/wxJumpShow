@@ -1,0 +1,44 @@
+
+.ta_c{text-align: center;  margin-top: 100px;}
+
+@-webkit-keyframes rotation{ from {-webkit-transform: rotate(0deg);} to {-webkit-transform: rotate(360deg);} }
+
+.Rotation{  -webkit-transform: rotate(360deg);
+    animation: rotation 3s linear infinite;
+    -moz-animation: rotation 3s linear infinite;
+    -webkit-animation: rotation 3s linear infinite;
+    -o-animation: rotation 3s linear infinite;
+}
+#status {
+    width: 30px;
+    height: 30px;
+    position:fixed;
+    right:30px;
+    z-index:33;
+    top:30px;
+}
+
+.img{border-radius: 250px;}
+
+#backControl {
+    position: fixed;
+    left: 10px;
+    top: 20px;
+    margin-top: 0;
+    display: inline-block;
+    z-index: 99999999;
+}
+
+#backControl a {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+    background: rgba(51,51,51,0.8);
+    background-image: url('../img/fanhui.png');
+    background-repeat: no-repeat;
+    background-size: 70%;
+    background-position: center center;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}

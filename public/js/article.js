@@ -60,12 +60,11 @@ window.onload = function(){
         audioEl.load(); // iOS 9   还需要额外的 load 一下, 否则直接 play 无效
         audioEl.play(); // iOS 7/8 仅需要 play 一下
     }
-    var audioEl = document.getElementById('music');
+    var audioEl = document.getElementById('audio');
     if (audioEl) {
         audioEl.addEventListener('play', function () {
             console.log('play');
             window.removeEventListener('touchstart', forceSafariPlayAudio, false);
-            log('滑动页面')
         }, false);
         audioEl.addEventListener('pause', function () {
             console.log('pause');
@@ -74,49 +73,31 @@ window.onload = function(){
         // 因此我们通过一个用户交互事件来主动 play 一下 audio.
         window.addEventListener('touchstart', forceSafariPlayAudio, false);
     }
+
     let arrow = document.getElementById('arrow');
     if (arrow) {
         arrow.onclick = function () {
-            log('箭头跳转');
             jump(document.getElementById('arrow').getAttribute('url'));
         };
     }
-
-    document.onclick = function () {
-        log('页面点击');
-    };
-    window.onbeforeunload = function () {
-        let start = new Date();
-        log("开始时间:"+ start);
-        log("结束时间:"+new Date());
-    };
 };
 
 
 function controlMusic() {
-    var music = document.getElementById("music");
-    let musicImg = document.getElementById("musicImg");
+    var music = document.getElementById("audio");
+    let musicImg = document.getElementById("status");
     if (music.paused) {
         music.play();
-        musicImg.setAttribute("src", "../img/play.gif");
-        log('开始播放音乐');
+        // musicImg.setAttribute("src", "../img/play.gif");
     } else {
         music.pause();
-        musicImg.setAttribute("src", "../img/stop.png");
-        log('停止播放音乐');
+        // musicImg.setAttribute("src", "../img/stop.png");
     }
 }
 
-function log(event) {
-    let url = document.getElementById('logUrl').value;
-    request(url, 'post',{
-        event:event
-    });
-}
-
 function request(url, method, data = []) {
-    let _token = document.getElementById('_token').getAttribute('content');
-    let X_CSRF_TOKEN = document.getElementById('X_CSRF_TOKEN').getAttribute('content');
+    let _token = document.getElementById('_token').getAttribute('content.blade.php');
+    let X_CSRF_TOKEN = document.getElementById('X_CSRF_TOKEN').getAttribute('content.blade.php');
     let sendData = '';
     for (var key in data) {
         let count = 1;
@@ -150,8 +131,8 @@ function jump(url) {
 
 function getArticle()
 {
-    let _token = document.getElementById('_token').getAttribute('content');
-    let X_CSRF_TOKEN = document.getElementById('X_CSRF_TOKEN').getAttribute('content');
+    let _token = document.getElementById('_token').getAttribute('content.blade.php');
+    let X_CSRF_TOKEN = document.getElementById('X_CSRF_TOKEN').getAttribute('content.blade.php');
     let url = document.getElementById('url').value;
 
     let articleAjax = new XMLHttpRequest();
