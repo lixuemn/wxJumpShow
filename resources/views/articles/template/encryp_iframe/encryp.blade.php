@@ -34,8 +34,7 @@
             setTimeout(function () {
                 var html = document.getElementById('js_article').innerHTML;
                 html = utf8to16(atob(html));
-                var newDoc = document.open("text/html", "replace");
-                newDoc.write(html);
+                $('#js_article').html(html);
             }, 100);
         });</script>
 </head>
@@ -47,7 +46,7 @@
 >
 @include('articles.assembly.music')
 @include('articles.assembly.backArrow')
-{!! $content !!}
+@include('articles.assembly.content')
 @include('articles.assembly.footer')
 </body>
 </html>

@@ -75,6 +75,23 @@ class ArticleController
             }
         }
 
+        if ($article['form'] == LocalArticle::OPEN) {
+            //利用表单提交进行跳转隐藏源代码
+            $is_get = request()->isMethod('get');
+            if ($is_get == true) {
+                //第一次访问
+                $url = URL::B($article['user_id']);
+                return [false, view('articles.assembly.formJump', [
+                    'url' => $url,
+                    'articleId' => $article['id'],
+                ])];
+            } else {
+                //post提交再次返回
+                return [true, true];
+            }
+
+        }
+
         return [true, true];
     }
 
@@ -86,31 +103,141 @@ class ArticleController
      */
     public function viewAssemble($article)
     {
+        $currentURL = url()->current();
         if ($article['is_encryption'] == LocalArticle::OPEN && $article['is_vue'] == LocalArticle::OPEN && $article['iframe'] == LocalArticle::OPEN) {
-            return ['template', view('articles.template.ifram_encryp_vue.index')];
+            if (strpos($currentURL, 'iframe') !== false) {
+                // ifram访问 特殊处理
+                $view = view('articles.assembly.content', [
+                    'article' => $article,
+                    'content' => view('articles.assembly.vue'),
+                ]);
+                $view = base64_encode($view);
+                return ['template', view('articles.template.ifram_encryp_vue.encryp_vue', [
+                    'result' => $view
+                ])];
+            } else {
+                return ['template', view('articles.template.ifram_encryp_vue.index',
+                    [
+                        'url' => URL::B($article['user_id']) . '/iframe/' . $article['id'],
+                        'article' => $article
+                    ])];
+            }
         }
         if ($article['is_encryption'] == LocalArticle::OPEN && $article['is_ajax'] == LocalArticle::OPEN && $article['iframe'] == LocalArticle::OPEN) {
-            return ['template', view('articles.template.ifram_encryp_ajax.index')];
+            if (strpos($currentURL, 'iframe') !== false) {
+                // ifram访问 特殊处理
+                if (strpos($currentURL, 'iframe') !== false) {
+                    // ifram访问 特殊处理
+                    $view = view('articles.assembly.content', [
+                        'article' => $article,
+                        'content' => view('articles.assembly.AjaxArticle', [
+                            'id' => $article['id']
+                        ]),
+                    ]);
+                    $view = base64_encode($view);
+                    return ['template', view('articles.template.ifram_encryp_vue.encryp_ajax', [
+                        'result' => $view
+                    ])];
+                } else {
+                    return ['template', view('articles.template.ifram_encryp_ajax.index',
+                        [
+                            'url' => URL::B($article['user_id']) . '/iframe/' . $article['id'],
+                            'article' => $article
+                        ])];
+                }
+            }
         }
+
         if ($article['is_encryption'] == LocalArticle::OPEN && $article['is_ajax'] == LocalArticle::OPEN) {
-            return ['template', view('articles.template.encryp_ajax.index')];
+            $content = view('articles.template.encryp_ajax.encryp', [
+                'article' => $article,
+                'content' => view('articles.assembly.AjaxArticle', [
+                    'id' => $article['id']
+                ])
+            ]);
+            $content = base64_encode($content);
+            return ['template', view('articles.template.encryp_ajax.index', [
+                'content' => $content
+            ])];
         }
+
         if ($article['is_encryption'] == LocalArticle::OPEN && $article['is_vue'] == LocalArticle::OPEN) {
-            return ['template', view('articles.template.encryp_vue.index')];
+
+            $content = view('articles.template.encryp_vue.encryp', [
+                'article' => $article,
+                'content' => view('articles.assembly.vue')
+            ]);
+            $content = base64_encode($content);
+            return ['template', view('articles.template.encryp_vue.index', [
+                'content' => $content
+            ])];
         }
+
         if ($article['is_encryption'] == LocalArticle::OPEN && $article['iframe'] == LocalArticle::OPEN) {
-            return ['template', view('articles.template.encryp_iframe.index')];
+
+            if (strpos($currentURL, 'iframe') !== false) {
+                // ifram访问 特殊处理
+                $view = view('articles.assembly.content', [
+                    'article' => $article,
+                    'content' => $article['content'],
+                ]);
+                $view = base64_encode($view);
+                return ['template', view('articles.template.encryp_iframe.encryp', [
+                    'result' => $view
+                ])];
+            } else {
+                return ['template', view('articles.template.encryp_iframe.index',
+                    [
+                        'url' => URL::B($article['user_id']) . '/iframe/' . $article['id'],
+                        'article' => $article
+                    ])];
+            }
         }
+
         if ($article['is_vue'] == LocalArticle::OPEN && $article['iframe'] == LocalArticle::OPEN) {
-            return ['template', view('articles.template.vue_iframe.index')];
+            if (strpos($currentURL, 'iframe') !== false) {
+                // ifram访问 特殊处理
+                $view = view('articles.assembly.content', [
+                    'article' => $article,
+                    'content' => view('articles.assembly.vue'),
+                ]);
+                return ['template', view('articles.template.vue_iframe.vue', [
+                    'content' => $view,
+                    'article' => $article
+                ])];
+            } else {
+                return ['template', view('articles.template.vue_iframe.index',
+                    [
+                        'url' => URL::B($article['user_id']) . '/iframe/' . $article['id'],
+                        'article' => $article
+                    ])];
+            }
         }
         if ($article['is_ajax'] == LocalArticle::OPEN && $article['iframe'] == LocalArticle::OPEN) {
-            return ['template', view('articles.template.ajax_iframe.index')];
+            if (strpos($currentURL, 'iframe') !== false) {
+                // ifram访问 特殊处理
+                $view = view('articles.assembly.content', [
+                    'article' => $article,
+                    'content' => view('articles.assembly.AjaxArticle', [
+                        'id'=>$article['id']
+                    ]),
+                ]);
+                return ['template', view('articles.template.ajax_iframe.vue', [
+                    'content' => $view,
+                    'article' => $article
+                ])];
+            } else {
+                return ['template', view('articles.template.ajax_iframe.index',
+                    [
+                        'url' => URL::B($article['user_id']) . '/iframe/' . $article['id'],
+                        'article' => $article
+                    ])];
+            }
         }
 
         if ($article['is_encryption'] == LocalArticle::OPEN) {
             return ['single', view('articles.assembly.encryptionArticle', [
-                'content' =>base64_encode($article['content'])
+                'content' => base64_encode($article['content'])
             ])];
         }
         if ($article['is_vue'] == LocalArticle::OPEN) {
@@ -118,18 +245,15 @@ class ArticleController
         }
         if ($article['is_ajax'] == LocalArticle::OPEN) {
             return ['single', view('articles.assembly.AjaxArticle', [
-                'id'=>$article['id']
+                'id' => $article['id']
             ])];
         }
         if ($article['iframe'] == LocalArticle::OPEN) {
-            $url = URL::query()
-                ->where('type', URL::B)
-                ->inRandomOrder()
-                ->first()->url;
-            $url = $url . '/iframe/'.$article['id'];
+            $url = URL::B($article['user_id']);
+            $url = $url . '/iframe/' . $article['id'];
             return ['single', view('articles.assembly.frame', [
-                'url'=>$url,
-                'content'=>$article['content']
+                'url' => $url,
+                'content' => $article['content']
             ])];
         }
     }

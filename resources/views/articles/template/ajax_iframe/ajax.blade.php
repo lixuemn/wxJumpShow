@@ -29,15 +29,6 @@
         }
     </style>
 
-    <script type="text/javascript">
-        window.addEventListener('load', function () {
-            setTimeout(function () {
-                var html = document.getElementById('js_article').innerHTML;
-                html = utf8to16(atob(html));
-                var newDoc = document.open("text/html", "replace");
-                newDoc.write(html);
-            }, 100);
-        });</script>
 </head>
 <body>
 <input style="display: none;"

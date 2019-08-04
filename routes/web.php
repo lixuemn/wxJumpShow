@@ -20,25 +20,9 @@ Route::post('/ajax/{id}', function ($id) {
 });
 
 Route::get('A-url/{id}', 'AurlController@index');
-//Route::get('show/{id}','ShowController@index');
-//Route::get('frame/{id}','IframeController@index');
-Route::post('getArticle/{id}', 'ShowController@getArticle');
 
 Route::get('/update/article/{id}', 'CacheFile\CacheFileController@index');
 
 
-Route::any('form/{id}', function ($id) {
-    $article = (array)\Illuminate\Support\Facades\DB::connection('mysql_data')
-        ->table('articles')
-        ->where('id', $id)
-        ->first();
-    $obj = new  \App\Http\Controllers\Article\Template\Tempalte2($article);
-    return $obj->getContent();
-});
-
-Route::get('ttt', function() {
-    return view('tt');
-});
-
-Route::get('show/{id}', 'ArticleController@show');
+Route::any('show/{id}', 'ArticleController@show');
 Route::get('iframe/{id}', 'ArticleController@show');
