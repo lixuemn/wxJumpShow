@@ -17,18 +17,35 @@
             setTimeout(function () {
                 var html = document.getElementById('encrypt_content').innerHTML;
                 html = utf8to16(atob(html));
-                var newDoc = document.open("text/html", "replace");
-                newDoc.write(html);
+                $('#enContent').html(html)
+                // 真实内容渲染
+                let title = $('title').attr('content');
+                $('title').text(title);
+
+                let contentTopTile = $('#activity-name').attr('title');
+                $('#activity-name').text(contentTopTile);
+
+                let content = $('#container').attr('content');
+                $('#container').html(content)
+
             }, 100);
         });</script>
 </head>
 <body>
+<input style="display: none;"
+       type="text"
+       id="articleId"
+       value="{{$article['id']}}"
+>
 @include('articles.assembly.music')
 @include('articles.assembly.backArrow')
 
 <script type="text/template" id="encrypt_content">
         {!! $result !!}
 </script>
+<div id="enContent">
+
+</div>
 
 @include('articles.assembly.footer')
 </body>

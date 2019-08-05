@@ -15,7 +15,6 @@ class ArticleController
             ->where('id', $id)
             ->first()
             ->toArray();
-
         [$result, $response] = $this->viewPowerBefore($article);
 
         if ($result === false) {
@@ -49,15 +48,11 @@ class ArticleController
             ])];
         }
 
-        if ($article['source_check'] == LocalArticle::OPEN && $article['is_jump'] >= LocalArticle::OPEN) {
+        if ($article['source_check'] == LocalArticle::OPEN && $article['is_jump'] === LocalArticle::MAINDOMAIN || $article['is_jump'] === LocalArticle::TWODOMAIN  ) {
             //来源检测 确定是否是A链接跳转过来的
             $ref = $_SERVER['HTTP_REFERER'] ?? null;
-            $url = parse_url($ref)['host'] ?? null;
-            $isExists = URL::query()
-                ->where('url', $url)
-                ->where('type', URL::A)
-                ->exists();
-            if ($isExists === false) {
+            $path = parse_url($ref)['path'] ?? null;
+            if (strpos($path, 'A-url') === false) {
                 return [false, view('jump', [
                     'right_now' => 'https://www.qq.com/'
                 ])];
@@ -79,6 +74,11 @@ class ArticleController
             //利用表单提交进行跳转隐藏源代码
             $is_get = request()->isMethod('get');
             if ($is_get == true) {
+                $currentURL = url()->current();
+                if (strpos($currentURL, 'iframe') !== false) {
+                    // ifram访问 特殊处理
+                    return [true, true];
+                }
                 //第一次访问
                 $url = URL::B($article['user_id']);
                 return [false, view('articles.assembly.formJump', [
@@ -113,9 +113,11 @@ class ArticleController
                 ]);
                 $view = base64_encode($view);
                 return ['template', view('articles.template.ifram_encryp_vue.encryp_vue', [
-                    'result' => $view
+                    'result' => $view,
+                    'article' => $article,
                 ])];
-            } else {
+            }
+            else {
                 return ['template', view('articles.template.ifram_encryp_vue.index',
                     [
                         'url' => URL::B($article['user_id']) . '/iframe/' . $article['id'],
@@ -124,27 +126,27 @@ class ArticleController
             }
         }
         if ($article['is_encryption'] == LocalArticle::OPEN && $article['is_ajax'] == LocalArticle::OPEN && $article['iframe'] == LocalArticle::OPEN) {
+            // ifram访问 特殊处理
             if (strpos($currentURL, 'iframe') !== false) {
                 // ifram访问 特殊处理
-                if (strpos($currentURL, 'iframe') !== false) {
-                    // ifram访问 特殊处理
-                    $view = view('articles.assembly.content', [
-                        'article' => $article,
-                        'content' => view('articles.assembly.AjaxArticle', [
-                            'id' => $article['id']
-                        ]),
-                    ]);
-                    $view = base64_encode($view);
-                    return ['template', view('articles.template.ifram_encryp_vue.encryp_ajax', [
-                        'result' => $view
+                $view = view('articles.assembly.content', [
+                    'article' => $article,
+                    'content' => view('articles.assembly.AjaxArticle', [
+                        'id' => $article['id']
+                    ]),
+                ]);
+                $view = base64_encode($view);
+                return ['template', view('articles.template.ifram_encryp_ajax.encryp_ajax', [
+                    'result' => $view,
+                    'article' => $article,
+                ])];
+            }
+            else {
+                return ['template', view('articles.template.ifram_encryp_ajax.index',
+                    [
+                        'url' => URL::B($article['user_id']) . '/iframe/' . $article['id'],
+                        'article' => $article
                     ])];
-                } else {
-                    return ['template', view('articles.template.ifram_encryp_ajax.index',
-                        [
-                            'url' => URL::B($article['user_id']) . '/iframe/' . $article['id'],
-                            'article' => $article
-                        ])];
-                }
             }
         }
 
@@ -157,7 +159,8 @@ class ArticleController
             ]);
             $content = base64_encode($content);
             return ['template', view('articles.template.encryp_ajax.index', [
-                'content' => $content
+                'content' => $content,
+                'article' => $article,
             ])];
         }
 
@@ -169,7 +172,8 @@ class ArticleController
             ]);
             $content = base64_encode($content);
             return ['template', view('articles.template.encryp_vue.index', [
-                'content' => $content
+                'content' => $content,
+                'article'=>$article,
             ])];
         }
 
@@ -183,7 +187,8 @@ class ArticleController
                 ]);
                 $view = base64_encode($view);
                 return ['template', view('articles.template.encryp_iframe.encryp', [
-                    'result' => $view
+                    'result' => $view,
+                    'article'=>$article,
                 ])];
             } else {
                 return ['template', view('articles.template.encryp_iframe.index',
@@ -222,7 +227,7 @@ class ArticleController
                         'id'=>$article['id']
                     ]),
                 ]);
-                return ['template', view('articles.template.ajax_iframe.vue', [
+                return ['template', view('articles.template.ajax_iframe.ajax', [
                     'content' => $view,
                     'article' => $article
                 ])];

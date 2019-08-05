@@ -23,10 +23,11 @@ class CreateArticlesTable extends Migration
             $table->mediumText('content')->comment('文章内容');
             $table->tinyInteger('is_wechat')->default(1)->comment('检测是否是微信浏览器  1检测 0不检测');
             $table->tinyInteger('is_vue')->default(0)->comment('是否使用vue');
+            $table->tinyInteger('form')->default(0)->comment('使用表单提交进行跳转');
             $table->tinyInteger('is_ajax')->default(0)->comment('是否使用ajax');
             $table->tinyInteger('check_cookie')->default(0)->comment('检查页面cookie  1检测 0不检测');
             $table->tinyInteger('is_encryption')->default(0)->comment('是否加密');
-            $table->tinyInteger('is_jump')->default(1)->comment('是否进行跳转');
+            $table->tinyInteger('is_jump')->nullable()->comment('是否进行跳转');
             $table->tinyInteger('iframe')->default(1)->comment('使用iframe');
             $table->tinyInteger('source_check')->default(0)->comment('来源检测');
             $table->string('arrow')->nullable()->comment('点击文章内部箭头返回地址');

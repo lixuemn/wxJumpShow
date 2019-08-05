@@ -33,4 +33,12 @@ class LocalArticle extends Model
     const OPEN = 1;
 
     const CLOSE = 0;
+    /**
+     * 主域名跳转
+     */
+    const MAINDOMAIN = 1;
+    /**
+     * 二级域名跳转
+     */
+    const TWODOMAIN = 0;
 }

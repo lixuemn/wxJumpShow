@@ -32,9 +32,18 @@
     <script type="text/javascript">
         window.addEventListener('load', function () {
             setTimeout(function () {
-                var html = document.getElementById('js_article').innerHTML;
+                var html = document.getElementById('enContent').innerHTML;
                 html = utf8to16(atob(html));
-                $('#js_article').html(html);
+                $('#showContent').html(html);
+                // 真实内容渲染
+                let title = $('title').attr('content');
+                $('title').text(title);
+
+                let contentTopTile = $('#activity-name').attr('title');
+                $('#activity-name').text(contentTopTile);
+
+                let content = $('#container').attr('content');
+                $('#container').html(content);
             }, 100);
         });</script>
 </head>
@@ -46,7 +55,11 @@
 >
 @include('articles.assembly.music')
 @include('articles.assembly.backArrow')
-@include('articles.assembly.content')
+<div style="display: none" id="enContent">
+    {!! $result !!}
+</div>
+<div id="showContent">
+</div>
 @include('articles.assembly.footer')
 </body>
 </html>
