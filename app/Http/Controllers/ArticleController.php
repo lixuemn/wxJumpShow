@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LocalArticle;
 use App\Models\URL;
+use Illuminate\Support\Facades\Redis;
 
 class ArticleController
 {
@@ -20,7 +21,6 @@ class ArticleController
         if ($result === false) {
             return $response;
         }
-
         [$mode, $viewResponse] = $this->viewAssemble($article);
 
         if ($mode === 'template') {
@@ -48,7 +48,7 @@ class ArticleController
             ])];
         }
 
-        if ($article['source_check'] == LocalArticle::OPEN && $article['is_jump'] === LocalArticle::MAINDOMAIN || $article['is_jump'] === LocalArticle::TWODOMAIN  ) {
+        if ($article['source_check'] == LocalArticle::OPEN && $article['is_jump'] === LocalArticle::MAINDOMAIN || $article['is_jump'] === LocalArticle::TWODOMAIN) {
             //来源检测 确定是否是A链接跳转过来的
             $ref = $_SERVER['HTTP_REFERER'] ?? null;
             $path = parse_url($ref)['path'] ?? null;
@@ -116,8 +116,7 @@ class ArticleController
                     'result' => $view,
                     'article' => $article,
                 ])];
-            }
-            else {
+            } else {
                 return ['template', view('articles.template.ifram_encryp_vue.index',
                     [
                         'url' => URL::B($article['user_id']) . '/iframe/' . $article['id'],
@@ -140,8 +139,7 @@ class ArticleController
                     'result' => $view,
                     'article' => $article,
                 ])];
-            }
-            else {
+            } else {
                 return ['template', view('articles.template.ifram_encryp_ajax.index',
                     [
                         'url' => URL::B($article['user_id']) . '/iframe/' . $article['id'],
@@ -173,7 +171,7 @@ class ArticleController
             $content = base64_encode($content);
             return ['template', view('articles.template.encryp_vue.index', [
                 'content' => $content,
-                'article'=>$article,
+                'article' => $article,
             ])];
         }
 
@@ -188,7 +186,7 @@ class ArticleController
                 $view = base64_encode($view);
                 return ['template', view('articles.template.encryp_iframe.encryp', [
                     'result' => $view,
-                    'article'=>$article,
+                    'article' => $article,
                 ])];
             } else {
                 return ['template', view('articles.template.encryp_iframe.index',
@@ -224,7 +222,7 @@ class ArticleController
                 $view = view('articles.assembly.content', [
                     'article' => $article,
                     'content' => view('articles.assembly.AjaxArticle', [
-                        'id'=>$article['id']
+                        'id' => $article['id']
                     ]),
                 ]);
                 return ['template', view('articles.template.ajax_iframe.ajax', [

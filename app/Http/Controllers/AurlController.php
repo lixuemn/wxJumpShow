@@ -15,12 +15,7 @@ class AurlController extends Controller
         if (!empty($article->right_now)) { //立即跳转
             return redirect($article->right_now);
         }
-        $url = URL::query()
-            ->where('user_id', $article->user_id)
-            ->where('type', URL::B)
-            ->inRandomOrder()
-            ->first()
-            ->url;
+        $url = URL::B($article->user_id);
         return view('articles.AJump', [
             'host' => $url,
             'id' => $id,

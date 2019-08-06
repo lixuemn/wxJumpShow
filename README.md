@@ -1,65 +1,89 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+# 微信跳转防封服务端
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+### 安装方法
 
-## About Laravel
+### 安装环境检查及配置
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+| 步骤  |
+| ------|
+|  确定mysql版本 >= 5.7 |
+|  php版本 >= 7.1 |
+|  php扩展安装了 fileinfo 扩展 |
+|  移除掉php禁用函数 putenv |
+|  移除掉php禁用函数 readlink |
+|  移除掉php禁用函数 symlink |
+|  移除掉php禁用函数 proc_open |
+|  安装了swoole 扩展 没安装运行 `pecl install swoole` 安装 |
+|  优化项:建议安装opcache 扩展 |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications.
+### 具体安装
+| 步骤 | 指令 |
+| ------ | ------ |
+| 1.下载 | git clone git@github.com:JueMeiAlg/wxJumpShow.git |
+| 2.安装依赖 | composer update 或者 composer install|
+| 3.复制出环境配置文件 |php -r "copy('.env.example', '.env')"; |
+| 4.配置你的数据库连接信息 | 在项目根目录.env文件中的 DB_DATABASE DB_USERNAME DB_PASSWORD 等字段处填写你的数据库信息 |
+| 5.修改.env APP_URL 处信息 | 此处填写你当前配置的网站域名 |
+| 6.生成APP_KEY | php artisan key:generate |
+| 7.运行数据迁移 | php artisan migrate |
+| 8.storage软连接 | php artisan storage:link 
+| 9.给予缓存文件合适的权限 | chmod -R 777 storage  |
+| 10.运行程序  | `php bin/laravels {start\stop\restart}` |
+| 11.配置Nginx  | 太长看下面 |
 
-## Learning Laravel
+#### Nginx配置
+`gzip on;
+ gzip_min_length 1024;
+ gzip_comp_level 2;
+ gzip_types text/plain text/css text/javascript application/json application/javascript application/x-javascript application/xml application/x-httpd-php image/jpeg image/gif image/png font/ttf font/otf image/svg+xml;
+ gzip_vary on;
+ gzip_disable "msie6";
+ upstream swoole {
+     # Connect IP:Port
+     server 127.0.0.1:5200 weight=5 max_fails=3 fail_timeout=30s;
+     # Connect UnixSocket Stream file, tips: put the socket file in the /dev/shm directory to get better performance
+     #server unix:/xxxpath/laravel-s-test/storage/laravels.sock weight=5 max_fails=3 fail_timeout=30s;
+     #server 192.168.1.1:5200 weight=3 max_fails=3 fail_timeout=30s;
+     #server 192.168.1.2:5200 backup;
+     keepalive 16;
+ }
+ server {
+     listen 80;
+     # Don't forget to bind the host
+     server_name example.com;
+     root /examplePath/public;
+     access_log /examplePath/log/nginx/$server_name.access.log  main;
+     autoindex off;
+     index index.html index.htm;
+     # Nginx handles the static resources(recommend enabling gzip), LaravelS handles the dynamic resource.
+     location / {
+         try_files $uri @laravels;
+     }
+     # Response 404 directly when request the PHP file, to avoid exposing public/*.php
+     #location ~* \.php$ {
+     #    return 404;
+     #}
+     location @laravels {
+         # proxy_connect_timeout 60s;
+         # proxy_send_timeout 60s;
+         # proxy_read_timeout 120s;
+         proxy_http_version 1.1;
+         proxy_set_header Connection "";
+         proxy_set_header X-Real-IP $remote_addr;
+         proxy_set_header X-Real-PORT $remote_port;
+         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+         proxy_set_header Host $http_host;
+         proxy_set_header Scheme $scheme;
+         proxy_set_header Server-Protocol $server_protocol;
+         proxy_set_header Server-Name $server_name;
+         proxy_set_header Server-Addr $server_addr;
+         proxy_set_header Server-Port $server_port;
+         proxy_pass http://swoole;
+     }
+ }`
+#### 其他
+本代码只负责展示页面数据,他的完整运行需要部署https://github.com/JueMeiAlg/wxJump,安装访问请访问该页面查看
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of any modern web application framework, making it a breeze to get started learning the framework.
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 1100 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell):
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### 如果本项目给你带了帮助请 start一下 谢谢
