@@ -33,7 +33,8 @@
 | 11.配置Nginx  | 太长看下面 |
 
 #### Nginx配置
-`gzip on;
+```
+gzip on;
  gzip_min_length 1024;
  gzip_comp_level 2;
  gzip_types text/plain text/css text/javascript application/json application/javascript application/x-javascript application/xml application/x-httpd-php image/jpeg image/gif image/png font/ttf font/otf image/svg+xml;
@@ -81,9 +82,10 @@
          proxy_set_header Server-Port $server_port;
          proxy_pass http://swoole;
      }
- }`
+ }
+ ```
 #### 其他
-本代码只负责展示页面数据,他的完整运行需要部署https://github.com/JueMeiAlg/wxJump,安装访问请访问该页面查看
+本代码只负责展示页面数据,他的完整运行需要部署 https://github.com/JueMeiAlg/wxJump 安装访问请访问该页面查看
 
 
 #### 如果本项目给你带了帮助请 start一下 谢谢
