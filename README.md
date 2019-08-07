@@ -10,6 +10,7 @@
 |  php版本 >= 7.1 |
 |  php扩展安装了 fileinfo 扩展 |
 |  移除掉php禁用函数 putenv |
+|  移除掉php禁用函数 popen |
 |  移除掉php禁用函数 readlink |
 |  移除掉php禁用函数 symlink |
 |  移除掉php禁用函数 proc_open |
