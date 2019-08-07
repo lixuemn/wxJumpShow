@@ -30,55 +30,82 @@
 | 7.运行数据迁移 | php artisan migrate |
 | 8.storage软连接 | php artisan storage:link 
 | 9.给予缓存文件合适的权限 | chmod -R 777 storage  |
-| 10.运行程序  | `php bin/laravels {start\stop\restart}` |
+| 10.运行程序  | `php ./bin/laravels start -d  其他命令:{start\stop\restart}` |
 | 11.配置Nginx  | 太长看下面 |
+| 12.如果你不想运行10或者11步可以按照常规lnmp或者lamp的部署方法来架设改项目||
 
 #### Nginx配置
 ```
-gzip on;
- gzip_min_length 1024;
- gzip_comp_level 2;
- gzip_types text/plain text/css text/javascript application/json application/javascript application/x-javascript application/xml application/x-httpd-php image/jpeg image/gif image/png font/ttf font/otf image/svg+xml;
- gzip_vary on;
- gzip_disable "msie6";
- upstream swoole {
-     # Connect IP:Port
-     server 127.0.0.1:5200 weight=5 max_fails=3 fail_timeout=30s;
-     # Connect UnixSocket Stream file, tips: put the socket file in the /dev/shm directory to get better performance
-     #server unix:/xxxpath/laravel-s-test/storage/laravels.sock weight=5 max_fails=3 fail_timeout=30s;
-     #server 192.168.1.1:5200 weight=3 max_fails=3 fail_timeout=30s;
-     #server 192.168.1.2:5200 backup;
-     keepalive 16;
- }
- server {
-     listen 80;
-     # Dont forget to bind the host
-     server_name example.com;
-     root /examplePath/public;
-     access_log /examplePath/log/nginx/$server_name.access.log  main;
-     autoindex off;
-     index index.html index.htm;
-     # Nginx handles the static resources(recommend enabling gzip), LaravelS handles the dynamic resource.
-     location / {
-         try_files $uri @laravels;
-     }
-     # Response 404 directly when request the PHP file, to avoid exposing public
-     /*.php
-     #location ~* \.php$ {
-     #    return 404;
-     #}*/
-     location @laravels {
-         # proxy_connect_timeout 60s;
-         # proxy_send_timeout 60s;
-         # proxy_read_timeout 120s;
-         proxy_http_version 1.1;
-         proxy_set_header Connection "";
-         proxy_set_header X-Real-IP $remote_addr;
-         proxy_set_header X-Real-PORT $remote_port;
-         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-         proxy_set_header Host $http_host;
-         proxy_set_header Scheme $scheme;
-         proxy_set_header Server-Protoc
-   }
+server
+{
+    listen 80;
+    server_name example.com;
+    index index.php index.html index.htm default.php default.htm default.html;
+    root /yourPath/wxJumpShow/public;
+    
+    #SSL-START SSL相关配置，请勿删除或修改下一行带注释的404规则
+    #error_page 404/404.html;
+    #SSL-END
+    
+    #ERROR-PAGE-START  错误页配置，可以注释、删除或修改
+    #error_page 404 /404.html;
+    #error_page 502 /502.html;
+    #ERROR-PAGE-END
+    
+    #PHP-INFO-START  PHP引用配置，可以注释或修改
+    include enable-php-72.conf;
+    #PHP-INFO-END
+    
+    #REWRITE-START URL重写规则引用,修改后将导致面板设置的伪静态规则失效
+    include /www/server/panel/vhost/rewrite/show.e6ty9e.cn.conf;
+    #REWRITE-END
+    
+    #禁止访问的文件或目录
+    location ~ ^/(\.user.ini|\.htaccess|\.git|\.svn|\.project|LICENSE|README.md)
+    {
+        return 404;
+    }
+    
+    #一键申请SSL证书验证目录相关设置
+    location ~ \.well-known{
+        allow all;
+    }
+    
+    location ~ .*\.(gif|jpg|jpeg|png|bmp|swf)$
+    {
+        expires      30d;
+        error_log off;
+        access_log /dev/null;
+    }
+   location / 
+    {
+    	try_files $uri @laravels;
+    }
+    location @laravels {
+        # proxy_connect_timeout 60s;
+        # proxy_send_timeout 60s;
+        # proxy_read_timeout 120s;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Real-PORT $remote_port;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_set_header Scheme $scheme;
+        proxy_set_header Server-Protocol $server_protocol;
+        proxy_set_header Server-Name $server_name;
+        proxy_set_header Server-Addr $server_addr;
+        proxy_set_header Server-Port $server_port;
+        proxy_pass http://127.0.0.1:5200;
+    }
+    
+    location ~ .*\.(js|css)?$
+    {
+        expires      12h;
+        error_log off;
+        access_log /dev/null; 
+    }
+    access_log  /www/wwwlogs/show.e6ty9e.cn.log;
+    error_log  /www/wwwlogs/show.e6ty9e.cn.error.log;
 }
 ```
