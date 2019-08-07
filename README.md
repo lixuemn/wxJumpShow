@@ -52,7 +52,7 @@ gzip on;
  }
  server {
      listen 80;
-     # Don't forget to bind the host
+     # Dont forget to bind the host
      server_name example.com;
      root /examplePath/public;
      access_log /examplePath/log/nginx/$server_name.access.log  main;
@@ -62,10 +62,11 @@ gzip on;
      location / {
          try_files $uri @laravels;
      }
-     # Response 404 directly when request the PHP file, to avoid exposing public/*.php
+     # Response 404 directly when request the PHP file, to avoid exposing public
+     /*.php
      #location ~* \.php$ {
      #    return 404;
-     #}
+     #}*/
      location @laravels {
          # proxy_connect_timeout 60s;
          # proxy_send_timeout 60s;
