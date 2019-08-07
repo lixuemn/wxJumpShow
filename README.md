@@ -21,7 +21,7 @@
 ### 具体安装
 | 步骤 | 指令 |
 | ------ | ------ |
-| 1.下载 | git clone https://github.com/JueMeiAlg/wxJumpShow.git |
+| 1.下载 | git clone https://github.com/JueMeiAlg/wxJumpShow.git 下载后执行 cd wxJumpShow |
 | 2.安装依赖 | composer update 或者 composer install|
 | 3.复制出环境配置文件 |php -r "copy('.env.example', '.env')"; |
 | 4.配置你的数据库连接信息 | 在项目根目录.env文件中的 DB_DATABASE DB_USERNAME DB_PASSWORD 等字段处填写你的数据库信息 |
