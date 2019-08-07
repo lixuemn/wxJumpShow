@@ -27,10 +27,11 @@
 | 5.修改.env APP_URL 处信息 | 此处填写你当前配置的网站域名 |
 | 6.生成APP_KEY | php artisan key:generate |
 | 7.运行数据迁移 | php artisan migrate |
-| 8.storage软连接 | php artisan storage:link 
-| 9.给予缓存文件合适的权限 | chmod -R 777 storage  |
-| 10.运行程序  | `php bin/laravels {start\stop\restart}` |
-| 11.配置Nginx  | 太长看下面 |
+| 8.storage软连接 | php artisan storage:link /
+| 9.安装passport | php artisan passport:install|
+| 10.给予缓存文件合适的权限 | chmod -R 777 storage  |
+| 11.运行程序  | `php bin/laravels {start\stop\restart}` |
+| 12.配置Nginx  | 太长看下面 |
 
 #### Nginx配置
 ```
