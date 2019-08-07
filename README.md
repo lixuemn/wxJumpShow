@@ -10,7 +10,6 @@
 |  php版本 >= 7.1 |
 |  php扩展安装了 fileinfo 扩展 |
 |  移除掉php禁用函数 putenv |
-|  移除掉php禁用函数 popen |
 |  移除掉php禁用函数 proc_open |
 |  移除掉php禁用函数 readlink |
 |  移除掉php禁用函数 symlink |
@@ -78,16 +77,4 @@ gzip on;
          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
          proxy_set_header Host $http_host;
          proxy_set_header Scheme $scheme;
-         proxy_set_header Server-Protocol $server_protocol;
-         proxy_set_header Server-Name $server_name;
-         proxy_set_header Server-Addr $server_addr;
-         proxy_set_header Server-Port $server_port;
-         proxy_pass http://swoole;
-     }
- }
- ```
-#### 其他
-本代码只负责展示页面数据,他的完整运行需要部署 https://github.com/JueMeiAlg/wxJump 安装访问请访问该页面查看
-
-
-#### 如果本项目给你带了帮助请 start一下 谢谢
+         proxy_set_header Server-Protoc
