@@ -78,3 +78,6 @@ gzip on;
          proxy_set_header Host $http_host;
          proxy_set_header Scheme $scheme;
          proxy_set_header Server-Protoc
+   }
+}
+```
