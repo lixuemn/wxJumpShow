@@ -16,7 +16,7 @@
 |  安装了swoole 扩展 没安装运行 `pecl install swoole` 安装 |
 |  优化项:建议安装opcache 扩展 |
 
- http://jump.wz6e1d.cn/manage 在线体验地址 登录账户:13686840083 密码123456
+
 
 
 ### 具体安装
