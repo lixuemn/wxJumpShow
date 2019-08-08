@@ -82,7 +82,11 @@ window.onload = function(){
     }
 };
 
-
+hh();
+window.onhashchange = function () {
+    //物理按键点击了返回
+    location.replace($('#physics').val());
+};
 function controlMusic() {
     var music = document.getElementById("audio");
     let musicImg = document.getElementById("status");

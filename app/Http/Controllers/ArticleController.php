@@ -12,10 +12,12 @@ class ArticleController
 {
     public function show($id)
     {
+
         $article = LocalArticle::query()
             ->where('id', $id)
             ->first()
             ->toArray();
+
         [$result, $response] = $this->viewPowerBefore($article);
 
         if ($result === false) {
@@ -41,6 +43,7 @@ class ArticleController
      */
     public function viewPowerBefore($article)
     {
+
         if (!is_null($article['right_now'])) {
             ///todo 立即跳转
             return [false, view('jump', [
@@ -48,7 +51,7 @@ class ArticleController
             ])];
         }
 
-        if ($article['source_check'] == LocalArticle::OPEN && $article['is_jump'] === LocalArticle::MAINDOMAIN || $article['is_jump'] === LocalArticle::TWODOMAIN) {
+        if ($article['source_check'] == LocalArticle::OPEN && ($article['is_jump'] === LocalArticle::MAINDOMAIN || $article['is_jump'] === LocalArticle::TWODOMAIN)) {
             //来源检测 确定是否是A链接跳转过来的
             $ref = $_SERVER['HTTP_REFERER'] ?? null;
             $path = parse_url($ref)['path'] ?? null;
@@ -69,7 +72,6 @@ class ArticleController
                 ])];
             }
         }
-
         if ($article['form'] == LocalArticle::OPEN) {
             //利用表单提交进行跳转隐藏源代码
             $is_get = request()->isMethod('get');

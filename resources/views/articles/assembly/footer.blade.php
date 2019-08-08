@@ -2,14 +2,8 @@
 {{--    cnzz数据统计--}}
     {!! $article['cnzz'] !!}
 </div>
+<input type="text" style="display: none" id="physics" value="{{$article['physics']}}">
 <script>
-    hh();
-    @if($article['physics'])
-        window.onhashchange = function () {
-        //物理按键点击了返回
-        location.replace("{{$article['physics']}}");
-    };
-    @endif
     // 真实内容渲染
     let title = $('title').attr('content');
     $('title').text(title);
